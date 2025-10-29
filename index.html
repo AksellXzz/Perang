@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perang Indonesia vs Belanda</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #000; /* Hitam */
+            color: #fff; /* Teks putih agar terlihat di background hitam */
+        }
+
+        header {
+            background-color: #222;
+            color: white;
+            text-align: center;
+            padding: 1em 0;
+        }
+
+        /* Style untuk Menu Awal */
+        #menu-awal {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh; /* Penuhi tinggi layar */
+            text-align: center;
+        }
+
+        #menu-awal button {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            margin: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        #menu-awal button:hover {
+            background-color: #367C39;
+        }
+
+        /* Style untuk Game (tersembunyi saat menu aktif) */
+        #game-container {
+            display: none; /* Sembunyikan game saat menu aktif */
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        #game-board {
+            width: 80%;
+            height: 400px;
+            background-color: #ddd;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .unit {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-color: lightblue;
+            border: 1px solid #333;
+            text-align: center;
+            line-height: 100px;
+        }
+
+        .indonesia {
+            left: 10%;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: lightgreen;
+        }
+
+        .belanda {
+            right: 10%;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: lightcoral;
+        }
+
+        #controls {
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+
+        button:hover {
+            background-color: #367C39;
+        }
+
+        #status {
+            text-align: center;
+        }
+
+        footer {
+            background-color: #222;
+            color: white;
+            text-align: center;
+            padding: 1em 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* Style untuk Modal */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            top: 0;
+            right: 0;
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            padding: 10px;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Menu Awal -->
+    <div id="menu-awal">
+        <h1>Perang Indonesia vs Belanda</h1>
+        <button id="mulai-button">Mulai</button>
+        <button id="tentang-button">Tentang</button>
+    </div>
+
+    <!-- Kontainer Game (awalnya tersembunyi) -->
+    <div id="game-container">
+        <header>
+            <h1>Perang Indonesia vs Belanda</h1>
+        </header>
+
+        <main>
+            <section id="game-board">
+                <div class="unit indonesia">Tentara Indonesia</div>
+                <div class="unit belanda">Tentara Belanda</div>
+            </section>
+
+            <section id="controls">
+                <button id="attack-button">Serang!</button>
+                <button id="defend-button">Bertahan</button>
+            </section>
+
+            <section id="status">
+                <p id="message">Selamat Datang di Medan Perang!</p>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Game Perang</p>
+        </footer>
+    </div>
+
+    <!-- Modal untuk Video -->
+    <div id="videoModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Kisah Perang Arek-Arek Suroboyo 10 November</h2>
+            <iframe width="100%" height="400" src="https://youtu.be/oj9oDqQ7jjc?si=55TIq07acpyzsb1Q" frameborder="0" allowfullscreen></iframe>
+            <p>Video ini menceritakan semangat perjuangan Arek-Arek Suroboyo dalam mempertahankan kemerdekaan Indonesia.</p>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript untuk menampilkan/menyembunyikan menu dan game
+        const mulaiButton = document.getElementById("mulai-button");
+        const tentangButton = document.getElementById("tentang-button");
+        const menuAwal = document.getElementById("menu-awal");
+        const gameContainer = document.getElementById("game-container");
+        const messageArea = document.getElementById("message"); // Tambahkan ini
+
+        mulaiButton.addEventListener("click", function() {
+            menuAwal.style.display = "none"; // Sembunyikan menu
+            gameContainer.style.display = "block"; // Tampilkan game
+            messageArea.textContent = "Perang Dimulai!"; // Pesan awal
+        });
+
+        // Dapatkan modal
+        const modal = document.getElementById("videoModal");
+
+        // Dapatkan tombol yang membuka modal
+        // const btn = document.getElementById("tentang-button"); // Sudah dideklarasikan
+
+        // Dapatkan elemen <span> yang menutup modal
+        const span = document.querySelector(".close");
+
+        // Saat pengguna mengklik tombol, buka modal
+        tentangButton.addEventListener("click", function() {
+            modal.style.display = "block";
+        });
+
+        // Saat pengguna mengklik <span> (x), tutup modal
+        span.addEventListener("click", function() {
+            modal.style.display = "none";
+        });
+
+        // Saat pengguna mengklik di luar modal, tutup modal
+        window.addEventListener("click", function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        });
+
+        // Logika game yang sudah ada
+        document.getElementById("attack-button").addEventListener("click", function() {
+            // Generate kekuatan serangan acak
+            const kekuatanIndonesia = Math.floor(Math.random() * 10); // Angka 0-9
+            const kekuatanBelanda = Math.floor(Math.random() * 10);
+
+            messageArea.textContent = `Indonesia menyerang dengan kekuatan ${kekuatanIndonesia}, Belanda bertahan dengan kekuatan ${kekuatanBelanda}!`;
+
+            // Tentukan pemenang
+            if (kekuatanIndonesia > kekuatanBelanda) {
+                messageArea.textContent += " Indonesia Menang!";
+            } else if (kekuatanBelanda > kekuatanIndonesia) {
+                messageArea.textContent += " Belanda Menang!";
+            } else {
+                messageArea.textContent += " Seri!";
+            }
+        });
+
+        document.getElementById("defend-button").addEventListener("click", function() {
+            messageArea.textContent = "Indonesia Bertahan!";
+            // Tambahkan logika pertahanan di sini (opsional)
+        });
+    </script>
+
+</body>
+</html>
